@@ -4,59 +4,93 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./styles/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
+
   <title>MOKEPON! 💥</title>
 </head>
 <body>
-  <h1>MOKEMON! 🔥💧🌱</h1> 
+  <header>
+    <h1 class="title">MOKEMON! ⚡</h1> 
+  </header>
+  <main>
+    <section id="select-pet">
+      <h2 class="subtitle">Choice your a pet:</h2>
+      <article class="cards">
+        <div>
+          <input  class="input-radio"  type="radio" name="pet" id="hipodoge"/>
+          <label class="select-label" for="hipodoge">
+            <p>Hipodoge</p> 
+            <img src="./assets/mokepons_mokepon_hipodoge_attack.png" alt="hipodoge image">
+          </label>
+        </div>
 
-  <section id="select-pet">
-    <h2>Choice your a pet:</h2>
+        <div>
+          <input class="input-radio"  type="radio" name="pet" id="capipepo"/>
+          <label class="select-label" for="capipepo">
+            <p>Capipepo</p> 
+            <img src="./assets/mokepons_mokepon_capipepo_attack.png" alt="capipepo image">
+          </label>
+        </div>
 
-    <label for="hipodoge">Hipodoge</label>
-    <input type="radio" name="pet" id="hipodoge"/>
-    <label for="capipepo">Capipepo</label>
-    <input type="radio" name="pet" id="capipepo"/>
-    <label for="ratigueya">Ratigueya</label>
-    <input type="radio" name="pet" id="ratigueya"/>
-    <!-- <label >Langostelvis</label>
-    <input type="radio" name="pet" id="langostelvis"/> -->
-
-
-    <!-- Hipodoge -> Water💧
-    Capipepo -> Earth🌱
-    Ratigueya -> Fire🔥
-    Langostelvis -> Water💧 and Fire🔥
-    Tucapalme -> Water and Earth🌱
-    Pydos -> Earth🌱 and Fire🔥 -->
-
-
-
-
-    <button id="button-select-pet">Select</button>
-    
-  </section>
+        <div>
+          <input class="input-radio"  type="radio" name="pet" id="ratigueya"/>
+          <label class="select-label" for="ratigueya">
+            <p>Ratigueya</p> 
+            <img src="./assets/mokepons_mokepon_ratigueya_attack.png" alt="ratigueya image">
+          </label>
+        </div>
+      </article>
+      <!-- <label >Langostelvis</label>
+        <input type="radio" name="pet" id="langostelvis"/> -->
+        
+      <button id="button-select-pet">Select</button>
   
-  <section id="select-attack">
-    <h2>Choice your attack:</h2>
-
-
-    <p>Your pet <span id="player-pet"></span> has <span id="player-lives">3</span> lives</p>
-    <p>Enemy's pet <span id="enemy-pet"></span> has <span id="enemy-lives">3</span> lives</p>
-
-    <p>
-      <button id="button-fire-pet">Fire 🔥</button>
-      <button id="button-water-pet">Water 💧</button>
-      <button id="button-earth-pet">Earth🌱</button>
-    </p>
-  </section>
-
-  <section id="messages">
-    <!-- <p>Your pet attacking with <span id="pet-attack-player"></span>, enemy's pet attacking with <span id="pet-attack-enemy"></span> - You won!</p> -->
-  </section>
-
-    <section id="reset">
-      <button id="button-reset">Reset</button>
+      <!-- Hipodoge -> Water💧
+      Capipepo -> Earth🌱
+      Ratigueya -> Fire🔥
+      Langostelvis -> Water💧 and Fire🔥
+      Tucapalme -> Water and Earth🌱
+      Pydos -> Earth🌱 and Fire🔥 -->
+      
     </section>
+    
+    <section id="select-attack">
+
+      <h2 class="subtitle">Choice your attack:</h2>
+  
+      <div class="attacks">
+        <button class="button-attack" id="button-fire-pet">Fire 🔥</button>
+        <button class="button-attack" id="button-water-pet">Water 💧</button>
+        <button class="button-attack" id="button-earth-pet">Earth🌱</button>
+      </div>
+
+      
+      <section id="messages">
+        <p id="result">Good Luck!</p>
+        <section id="reset">
+          <button id="button-reset">Reset</button>
+        </section>  
+      </section>
+
+      <div class="cards-attacks">
+        <section class="player">
+          <h2>You</h2>
+          <p id="player-lives">3</p>
+          <p id="player-pet"></p>
+          <div id="player-attack"></div>
+        </section>
+        <section class="enemy">
+          <h2>Enemy</h2>
+          <p id="enemy-lives">3</p>
+          <p id="enemy-pet"></p> 
+          <div id="enemy-attack"></div>
+        </section>
+      </div>
+    </section>
+  </main>
 
   <script src="./js/mokepon.js"></script>
 </body>

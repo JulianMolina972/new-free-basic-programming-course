@@ -18,7 +18,9 @@ let spanEnemyPet = $('enemy-pet')
 let buttonFirePet = $('button-fire-pet')
 let buttonWaterPet = $('button-water-pet')
 let buttonEarthPet = $('button-earth-pet')
-let messages = $('messages')
+let messages = $('result')
+let playerAttack = $('player-attack')
+let enemyAttack = $('enemy-attack')
 let spanPlayerLives = $('player-lives')
 let spanEnemyLives = $('enemy-lives')
 let buttonReset = $('button-reset');
@@ -38,15 +40,15 @@ const random = (min, max) => {
 const selectPetPlayer = () => {
   if(hipodoge.checked == true) {
     spanPlayerPet.innerHTML = 'Hipodoge'
-    sectionSelectAttack.style.display = 'block';
+    sectionSelectAttack.style.display = 'flex';
     selectPet.style.display = 'none';
   } else if(capipepo.checked == true) {
     spanPlayerPet.innerHTML = 'Capipepo'
-    sectionSelectAttack.style.display = 'block';
+    sectionSelectAttack.style.display = 'flex';
     selectPet.style.display = 'none';
   } else if(ratigueya.checked == true) {
     spanPlayerPet.innerHTML = 'Ratigueya'
-    sectionSelectAttack.style.display = 'block';
+    sectionSelectAttack.style.display = 'flex';
     selectPet.style.display = 'none';
   } else {
     alert('please select an option')
@@ -107,19 +109,19 @@ const earthAttack = () => {
 
 const result = () => {
   if (playerPetAttack === randomPetAttack){
-    resultGame = 'TIE'
+    resultGame = 'TIE';
   } else if (playerPetAttack === 'Fire🔥' && randomPetAttack === 'Water💧' || 
               playerPetAttack === 'Earth🌱' && randomPetAttack === 'Fire🔥'||
               playerPetAttack === 'Water💧' && randomPetAttack === 'Earth🌱'){
-    resultGame = 'LOST'
+    resultGame = 'LOST';
     playerLives--
     spanPlayerLives.innerText = playerLives;
   } else {
-    resultGame = 'YOU WON!'
+    resultGame = 'YOU WON!';
     enemyLives--
     spanEnemyLives.innerText = enemyLives;
   }
-  createMessage();
+  createMessage(resultGame);
 
   checkLives();
 
@@ -138,22 +140,29 @@ const checkLives = () => {
 }
 
 
-const createMessage = () => {
-  let paragraph = document.createElement('p');
-  paragraph.innerText = `Your pet attacking with ${playerPetAttack}, enemy's pet attacking with ${randomPetAttack} - ${resultGame}`
-  messages.appendChild(paragraph)
+const createMessage = (resultGameFinal) => {
+
+  let playerAttackNew = document.createElement('p');
+  let enemyAttackNew = document.createElement('p');
+
+  messages.innerHTML = resultGameFinal;
+  playerAttackNew.innerHTML = playerPetAttack;
+  enemyAttackNew.innerHTML = randomPetAttack;
+  // let paragraph = document.createElement('p');
+  // paragraph.innerText = `Your pet attacking with ${playerPetAttack}, enemy's pet attacking with ${randomPetAttack} - ${resultGame}`
+
+  playerAttack.appendChild(playerAttackNew)
+  enemyAttack.appendChild(enemyAttackNew)
 }
 
 const createMessageFinal = (resultFinal) => {
-  let paragraph = document.createElement('h2');
-  paragraph.innerText = resultFinal
-  messages.appendChild(paragraph)
+  messages.innerText = resultFinal
 
   buttonFirePet.disabled = true;
   buttonWaterPet.disabled = true;
   buttonEarthPet.disabled = true;
 
-  buttonReset.style.display = 'block';
+  buttonReset.style.display = 'flex';
 }
 
 const restartGame = () => {
