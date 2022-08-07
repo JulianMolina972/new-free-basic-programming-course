@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
-
   <title>MOKEPON! 💥</title>
 </head>
 <body>
@@ -18,42 +17,12 @@
   <main>
     <section id="select-pet">
       <h2 class="subtitle">Choice your a pet:</h2>
-      <article class="cards">
-        <div>
-          <input  class="input-radio"  type="radio" name="pet" id="hipodoge"/>
-          <label class="select-label" for="hipodoge">
-            <p>Hipodoge</p> 
-            <img src="./assets/mokepons_mokepon_hipodoge_attack.png" alt="hipodoge image">
-          </label>
-        </div>
-
-        <div>
-          <input class="input-radio"  type="radio" name="pet" id="capipepo"/>
-          <label class="select-label" for="capipepo">
-            <p>Capipepo</p> 
-            <img src="./assets/mokepons_mokepon_capipepo_attack.png" alt="capipepo image">
-          </label>
-        </div>
-
-        <div>
-          <input class="input-radio"  type="radio" name="pet" id="ratigueya"/>
-          <label class="select-label" for="ratigueya">
-            <p>Ratigueya</p> 
-            <img src="./assets/mokepons_mokepon_ratigueya_attack.png" alt="ratigueya image">
-          </label>
-        </div>
+      <article  id="cards-container" class="cards">
       </article>
-      <!-- <label >Langostelvis</label>
-        <input type="radio" name="pet" id="langostelvis"/> -->
+
         
       <button id="button-select-pet">Select</button>
   
-      <!-- Hipodoge -> Water💧
-      Capipepo -> Earth🌱
-      Ratigueya -> Fire🔥
-      Langostelvis -> Water💧 and Fire🔥
-      Tucapalme -> Water and Earth🌱
-      Pydos -> Earth🌱 and Fire🔥 -->
       
     </section>
     
@@ -61,10 +30,10 @@
 
       <h2 class="subtitle">Choice your attack:</h2>
   
-      <div class="attacks">
-        <button class="button-attack" id="button-fire-pet">Fire 🔥</button>
+      <div id="pet-attacks" class="attacks">
+        <!-- <button class="button-attack" id="button-fire-pet">Fire 🔥</button>
         <button class="button-attack" id="button-water-pet">Water 💧</button>
-        <button class="button-attack" id="button-earth-pet">Earth🌱</button>
+        <button class="button-attack" id="button-earth-pet">Earth🌱</button> -->
       </div>
 
       

@@ -1,90 +1,214 @@
 
 const $ = (id) => document.getElementById(id);
 
+let mokepons = [];
 let playerPetAttack;
 let randomPetAttack;
 let playerLives = 3;
 let enemyLives = 3;
 let resultGame;
+let optionMokepons;
+let selectHipodoge;
+let selectCapipepo; 
+let selectRatigueya;
+let petPlayer;
+let buttonFirePet;
+let buttonWaterPet;
+let buttonEarthPet;
+let mokeponAttacks;
+
+
+const buttonSelectPet = $('button-select-pet')
+const spanPlayerPet = $('player-pet')
+const spanEnemyPet = $('enemy-pet')
+const messages = $('result')
+const playerAttack = $('player-attack')
+const enemyAttack = $('enemy-attack')
+const spanPlayerLives = $('player-lives')
+const spanEnemyLives = $('enemy-lives')
+const buttonReset = $('button-reset')
+const sectionSelectAttack = $('select-attack')
+const selectPet = $('select-pet')
+const cardsContainer = $('cards-container')
+const petAttacks = $('pet-attacks')
 
 
 
-let buttonSelectPet = $('button-select-pet')
-let hipodoge = $('hipodoge');
-let capipepo = $('capipepo');
-let ratigueya = $('ratigueya');
-let spanPlayerPet = $('player-pet')
-let spanEnemyPet = $('enemy-pet')
-let buttonFirePet = $('button-fire-pet')
-let buttonWaterPet = $('button-water-pet')
-let buttonEarthPet = $('button-earth-pet')
-let messages = $('result')
-let playerAttack = $('player-attack')
-let enemyAttack = $('enemy-attack')
-let spanPlayerLives = $('player-lives')
-let spanEnemyLives = $('enemy-lives')
-let buttonReset = $('button-reset');
-let sectionSelectAttack = $('select-attack')
-let selectPet = $('select-pet');
+class Mokepon {
+  constructor(name, photo, life) {
+    this.name = name;
+    this.photo = photo;
+    this.life = life;
+    this.attacks = []
+  }
+}
+
+let hipodoge = new Mokepon('Hipodoge', './assets/mokepons_mokepon_hipodoge_attack.png', 5)
+let capipepo = new Mokepon('Capipepo', './assets/mokepons_mokepon_capipepo_attack.png', 5)
+let ratigueya = new Mokepon('Ratigueya', './assets/mokepons_mokepon_ratigueya_attack.png', 5)
+
+// mokepons.push(hipodoge, capipepo, ratigueya)
+
+hipodoge.attacks.push(
+  { name: 'Water 💧', id: 'button-water-pet'},
+  { name: 'Water 💧', id: 'button-water-pet'},
+  { name: 'Water 💧', id: 'button-water-pet'},
+  { name: 'Fire 🔥', id: 'button-fire-pet'},
+  { name: 'Earth 🌱', id: 'button-earth-pet'},
+)
+capipepo.attacks.push(
+  { name: 'Earth 🌱', id: 'button-earth-pet'},
+  { name: 'Earth 🌱', id: 'button-earth-pet'},
+  { name: 'Earth 🌱', id: 'button-earth-pet'},
+  { name: 'Fire 🔥', id: 'button-fire-pet'},
+  { name: 'Water 💧', id: 'button-water-pet'},
+)
+ratigueya.attacks.push(
+  { name: 'Fire 🔥', id: 'button-fire-pet'},
+  { name: 'Fire 🔥', id: 'button-fire-pet'},
+  { name: 'Fire 🔥', id: 'button-fire-pet'},
+  { name: 'Water 💧', id: 'button-water-pet'},
+  { name: 'Earth 🌱', id: 'button-earth-pet'},
+)
+mokepons.push(hipodoge, capipepo, ratigueya)
 
 
-sectionSelectAttack.style.display = 'none';
-buttonReset.style.display = 'none';
 
+
+// console.log(mokepons)
+
+
+const initialPlay = () => {
+  
+  sectionSelectAttack.style.display = 'none';
+  
+  mokepons.forEach(mokepon => { 
+    optionMokepons = `
+    <div>
+      <input  class="input-radio"  type="radio" name="pet" id=${mokepon.name} />
+      <label class="select-label" for="${mokepon.name}">
+        <p>${mokepon.name}</p> 
+        <img src=${mokepon.photo} alt="${mokepon.name} image">
+      </label>
+    </div>
+    `
+
+    cardsContainer.innerHTML += optionMokepons
+    
+  });
+  
+  
+  selectHipodoge = $('Hipodoge')
+  selectCapipepo = $('Capipepo')
+  selectRatigueya = $('Ratigueya')
+
+  
+  
+  buttonReset.style.display = 'none';
+
+  buttonSelectPet.addEventListener('click', selectPetPlayer);
+  buttonSelectPet.addEventListener('click', selectPetEnemy);
+  buttonReset.addEventListener('click', restartGame)
+}
 
 const random = (min, max) => {
   return Math.floor(Math.random()* (max - min + 1) + min);
 }
 
-
 const selectPetPlayer = () => {
-  if(hipodoge.checked == true) {
-    spanPlayerPet.innerHTML = 'Hipodoge'
+  if(selectHipodoge.checked == true) {
+    spanPlayerPet.innerHTML = selectHipodoge.id
+    petPlayer = selectHipodoge.id
     sectionSelectAttack.style.display = 'flex';
     selectPet.style.display = 'none';
-  } else if(capipepo.checked == true) {
-    spanPlayerPet.innerHTML = 'Capipepo'
+  } else if(selectCapipepo.checked == true) {
+    spanPlayerPet.innerHTML = selectCapipepo.id
+    petPlayer = selectCapipepo.id
     sectionSelectAttack.style.display = 'flex';
     selectPet.style.display = 'none';
-  } else if(ratigueya.checked == true) {
-    spanPlayerPet.innerHTML = 'Ratigueya'
+  } else if(selectRatigueya.checked == true) {
+    spanPlayerPet.innerHTML = selectRatigueya.id
+    petPlayer = selectRatigueya.id
     sectionSelectAttack.style.display = 'flex';
     selectPet.style.display = 'none';
   } else {
     alert('please select an option')
   }
+  extractAttacks(petPlayer)
+}
+
+const extractAttacks = (petPlayer) => {
+  let attacks;
+
+  for (let i = 0; i < mokepons.length; i++) {
+    if(petPlayer === mokepons[i].name){
+      attacks = mokepons[i].attacks
+    }
+  }
+  showAttacks(attacks)  
+}
+
+const showAttacks = (attacks) => {
+  attacks.forEach(attack => { 
+    mokeponAttacks = `
+    <button class="button-attack" id=${attack.id}>${attack.name}</button>
+    `
+    petAttacks.innerHTML += mokeponAttacks
+  });
+
   
+
+  buttonFirePet = $('button-fire-pet')
+  buttonWaterPet = $('button-water-pet')
+  buttonEarthPet = $('button-earth-pet')
+
+  buttonFirePet.addEventListener('click', fireAttack);
+  buttonWaterPet.addEventListener('click', waterAttack);
+  buttonEarthPet.addEventListener('click', earthAttack);
 }
 
 const selectPetEnemy = () => {
-  const randomPet = random(1,3);
-  if(randomPet == 1) {
-    spanEnemyPet.innerHTML = 'Hipodoge'
-  } else if(randomPet == 2) {
-    spanEnemyPet.innerHTML = 'Capipepo'
-  } else if(randomPet == 3) {
-    spanEnemyPet.innerHTML = 'Ratigueya'
-  }
+  const randomPet = random(0, mokepons.length - 1);  
+  let selectPetEnemyRandom = mokepons[randomPet].name
+  spanEnemyPet.innerHTML = selectPetEnemyRandom
+  return selectPetEnemyRandom;
+
 }
 
 const randomAttackEnemy = () => {
-  randomPetAttack = random(1,3);
-  if(randomPetAttack == 1) {
-    randomPetAttack = 'Fire🔥'
-    // petAttackEnemy.innerHTML = 'FIRE🔥'
-  } else if(randomPetAttack == 2) {
-    randomPetAttack = 'Water💧'
-    // petAttackEnemy.innerHTML = 'Water💧'
-  } else if(randomPetAttack == 3) {
-    randomPetAttack = 'Earth🌱'
-    // petAttackEnemy.innerHTML = 'Earth🌱'
-  }
+
+
+  // randomPetAttack = random(0, mokepons[0].attacks.length - 1);
+  // let petEnemyRandom = selectPetEnemy();
+  // for (let i = 0; i < mokepons.length; i++) {
+  // if (petEnemyRandom === mokepons[i].name){
+  //   for (let j = 0; j < mokepons[i].attacks.length; j++) {
+  //     console.log(mokepons[i].attacks[0].name);
+  //     randomPetAttack = mokepons[i].attacks[0].name
+  //   }
+  //   }
+  // }
+  // return randomPetAttack;
+  // if (mokepons[])
+  // for (let i = 0; i < array.length; i++) {
+  //   const element = array[i];
+    
+  // }
+  // console.log(randomPetAttack) 
+  // randomPetAttack = random(1, 3);
+  // if(randomPetAttack === 1) {
+  //   randomPetAttack = 'Fire🔥'
+  //   // petAttackEnemy.innerHTML = 'FIRE🔥'
+  // } else if(randomPetAttack == 2) {
+  //   randomPetAttack = 'Water💧'
+  //   // petAttackEnemy.innerHTML = 'Water💧'
+  // } else if(randomPetAttack == 3) {
+  //   randomPetAttack = 'Earth🌱'
+  //   // petAttackEnemy.innerHTML = 'Earth🌱'
+  // }
   
   // return randomPetAttack;
 } 
-
-
-
 
 const fireAttack = () => {
   playerPetAttack = 'Fire🔥'
@@ -139,7 +263,6 @@ const checkLives = () => {
 
 }
 
-
 const createMessage = (resultGameFinal) => {
 
   let playerAttackNew = document.createElement('p');
@@ -169,14 +292,9 @@ const restartGame = () => {
   location.reload();
 }
 
-buttonSelectPet.addEventListener('click', selectPetPlayer);
-buttonSelectPet.addEventListener('click', selectPetEnemy);
-buttonFirePet.addEventListener('click', fireAttack);
-buttonWaterPet.addEventListener('click', waterAttack);
-buttonEarthPet.addEventListener('click', earthAttack);
-buttonReset.addEventListener('click', restartGame)
 
 
 
 
-// window.addEventListener('load', initialPlay);
+
+window.addEventListener('load', initialPlay);
