@@ -17,6 +17,10 @@ const sectionSeeMap = $('see-map')
 const map = $('map')
 
 
+let mokepons = [];
+let buttons = [];
+let playerAttackSequence = [];
+let enemyAttackSequence = [];
 let resultGame;
 let optionMokepons;
 let selectHipodoge;
@@ -34,33 +38,41 @@ let selectPetEnemyRandom;
 let indexPlayerAttack;
 let indexEnemyAttack;
 let interval;
-let mokepons = [];
-let buttons = [];
-let playerAttackSequence = [];
-let enemyAttackSequence = [];
+let petPlayerObject;
 let playerVictories = 0;
 let enemyVictories = 0;
 let canvasMap = map.getContext('2d');
 let backgroundMap = new Image();
-backgroundMap.src = '../assets/mokemap.png';
+backgroundMap.src = './assets/mokemap.png';
+
 
 
 
 
 class Mokepon {
-  constructor(name, photo, life, attacks) {
+  constructor(name, photo, life, attacks, photoMap, x = 10, y = 10) {
     this.name = name;
     this.photo = photo;
     this.life = life;
     this.attacks = attacks;
-    this.x = 20;
-    this.y = 30;
-    this.width = 80;
-    this.height = 80;
+    this.x = x;
+    this.y = y;
+    this.width = 60;
+    this.height = 60;
     this.mapPhoto = new Image()
-    this.mapPhoto.src = photo
+    this.mapPhoto.src = photoMap
     this.velocityX = 0
     this.velocityY = 0
+  }
+
+  paintMokepon() {
+    canvasMap.drawImage(
+      this.mapPhoto,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    )
   }
 }
 
@@ -88,9 +100,12 @@ const earthType = [
   { name: 'Water 💧', id: 'button-water-pet'},
 ]
 
-let hipodoge = new Mokepon('Hipodoge', './assets/mokepons_mokepon_hipodoge_attack.png', 5, waterType)
-let capipepo = new Mokepon('Capipepo', './assets/mokepons_mokepon_capipepo_attack.png', 5, earthType)
-let ratigueya = new Mokepon('Ratigueya', './assets/mokepons_mokepon_ratigueya_attack.png', 5, fireType)
+let hipodoge = new Mokepon('Hipodoge', './assets/mokepons_mokepon_hipodoge_attack.png', 5, waterType, './assets/hipodoge.webp')
+let capipepo = new Mokepon('Capipepo', './assets/mokepons_mokepon_capipepo_attack.png', 5, earthType, './assets/capipepo.webp')
+let ratigueya = new Mokepon('Ratigueya', './assets/mokepons_mokepon_ratigueya_attack.png', 5, fireType,'./assets/ratigueya.webp')
+let hipodogeEnemy = new Mokepon('Hipodoge', './assets/mokepons_mokepon_hipodoge_attack.png', 5, waterType, './assets/hipodoge.webp', 80, 120)
+let capipepoEnemy = new Mokepon('Capipepo', './assets/mokepons_mokepon_capipepo_attack.png', 5, earthType, './assets/capipepo.webp', 150, 95)
+let ratigueyaEnemy = new Mokepon('Ratigueya', './assets/mokepons_mokepon_ratigueya_attack.png', 5, fireType,'./assets/ratigueya.webp', 200, 190)
 let pydos = new Mokepon('Pydos', './assets/mokepons_mokepon_pydos_attack.png', 5, waterType)
 let langostelvis = new Mokepon('Langostelvis', './assets/mokepons_mokepon_langostelvis_attack.png', 5, fireType)
 let tucapalma = new Mokepon('Tucapalma', './assets/mokepons_mokepon_tucapalma_attack.png', 5, earthType)
@@ -98,7 +113,7 @@ let tucapalma = new Mokepon('Tucapalma', './assets/mokepons_mokepon_tucapalma_at
 mokepons.push(hipodoge, ratigueya, capipepo, pydos, langostelvis, tucapalma)
 
 
-const initialPlay = () => {
+function initialPlay()  {
   
   sectionSelectAttack.style.display = 'none';
   sectionSeeMap.style.display = 'none';
@@ -123,25 +138,23 @@ const initialPlay = () => {
   selectTucapalma = $('Tucapalma')
   selectLangostelvis = $('Langostelvis')
 
-  buttonReset.style.display = 'none';
+  // buttonReset.style.display = 'none';
   buttonSelectPet.addEventListener('click', selectPetPlayer);
-  buttonSelectPet.addEventListener('click', selectPetEnemy);
+  
   buttonReset.addEventListener('click', restartGame)
 }
 
-const random = (min, max) => {
+function random (min, max){
   return Math.floor(Math.random()* (max - min + 1) + min);
 }
 
-const displayStyles = () => {
+function displayStyles ()  {
   // sectionSelectAttack.style.display = 'flex';
-  selectPet.style.display = 'none';
 }
 
-const selectPetPlayer = () => {
+function selectPetPlayer()  {
   
-  sectionSeeMap.style.display = 'flex';
-  initialMap();
+  selectPet.style.display = 'none';
   
   if(selectHipodoge.checked == true) {
     spanPlayerPet.innerHTML = selectHipodoge.id
@@ -171,9 +184,13 @@ const selectPetPlayer = () => {
     alert('please select an option')
   }
   extractAttacks(petPlayer)
+  sectionSeeMap.style.display = 'flex';
+  initialMap();
+  selectPetEnemy()
+  
 }
 
-const extractAttacks = (petPlayer) => {
+function extractAttacks(petPlayer) {
   let attacks;
 
   for (let i = 0; i < mokepons.length; i++) {
@@ -184,7 +201,7 @@ const extractAttacks = (petPlayer) => {
   showAttacks(attacks)  
 }
 
-const showAttacks = (attacks) => {
+function showAttacks  (attacks) {
   attacks.forEach(attack => { 
     mokeponAttacks = `
     <button class="button-attack bAttacks"  id=${attack.id}>${attack.name}</button>
@@ -197,7 +214,7 @@ const showAttacks = (attacks) => {
   buttons = document.querySelectorAll('.bAttacks')
 }
 
-const attackSequence = () => {
+function attackSequence () {
   buttons.forEach((button) => {
     button.addEventListener('click', (e) => {
       if (e.target.textContent === 'Fire 🔥') {
@@ -218,31 +235,31 @@ const attackSequence = () => {
   })
 }
 
-const selectPetEnemy = () => {
+function selectPetEnemy()  {
   const randomPet = random(0, mokepons.length - 1);  
   spanEnemyPet.innerHTML = mokepons[randomPet].name
   selectPetEnemyRandom = mokepons[randomPet].attacks
   attackSequence();
 }
 
-const randomAttackEnemy = () => {
+function randomAttackEnemy ()  {
   selectPetEnemyRandom.forEach((attack) => enemyAttackSequence.push(attack.name))
   enemyAttackSequence.sort(() => Math.random()-0.5)
   startCombat();
 } 
 
-const startCombat = () => {
+function startCombat ()  {
   if (playerAttackSequence.length === 5) {
     result();
   }
 }
 
-const indexBoth = (player, enemy) => {
+function indexBoth (player, enemy) {
   indexPlayerAttack = playerAttackSequence[player];
   indexEnemyAttack = enemyAttackSequence[enemy];
 }
 
-const result = () => {
+function result  ()  {
   for (let i = 0; i < playerAttackSequence.length; i++) {
     if(playerAttackSequence[i] === enemyAttackSequence[i]) {
       indexBoth(i, i)
@@ -270,7 +287,7 @@ const result = () => {
   // return resultGame;
 }
 
-const checkLives = () => {
+function checkLives ()  {
   if (playerVictories === enemyVictories) {
     createMessageFinal('This is a TIE')
   } else if(playerVictories > enemyVictories){
@@ -280,7 +297,7 @@ const checkLives = () => {
   }
 }
 
-const createMessage = (resultGameFinal) => {
+function createMessage  (resultGameFinal)  {
 
   let playerAttackNew = document.createElement('p');
   let enemyAttackNew = document.createElement('p');
@@ -292,18 +309,19 @@ const createMessage = (resultGameFinal) => {
   enemyAttack.appendChild(enemyAttackNew)
 }
 
-const createMessageFinal = (resultFinal) => {
+function createMessageFinal (resultFinal)  {
   messages.innerText = resultFinal
   buttonReset.style.display = 'flex';
 }
 
-const restartGame = () => {
+function restartGame()  {
   location.reload();
 }
 
 function paintCanvas() {
-  capipepo.x += capipepo.velocityX
-  capipepo.y += capipepo.velocityY
+  
+  petPlayerObject.x += petPlayerObject.velocityX
+  petPlayerObject.y += petPlayerObject.velocityY
   canvasMap.clearRect(0, 0, map.width, map.height);
   canvasMap.drawImage(
     backgroundMap,
@@ -312,37 +330,35 @@ function paintCanvas() {
     map.width,
     map.height
   )
-  canvasMap.drawImage(
-    capipepo.mapPhoto,
-    capipepo.x,
-    capipepo.y,
-    capipepo.width,
-    capipepo.height
-  )
+  petPlayerObject.paintMokepon();
+  hipodogeEnemy.paintMokepon();
+  capipepoEnemy.paintMokepon();
+  ratigueyaEnemy.paintMokepon();
 }
 
-const moveRight = () => {
-    capipepo.velocityX = 5;
+function moveRight  ()  {
+  petPlayerObject.velocityX = 5;
 }
 
-const moveLeft = () => {
-    capipepo.velocityX = -5
+function moveLeft  ()  {
+  petPlayerObject.velocityX = -5
 }
 
-const moveUp = () => {
-    capipepo.velocityY = -5
+function moveUp  ()  {
+  petPlayerObject.velocityY = -5
 }
 
-const moveDown = () => {
-    capipepo.velocityY = 5
+function moveDown  ()  {
+  petPlayerObject.velocityY = 5
 }
 
-const stopMovement = () => {
-  capipepo.velocityX = 0
-  capipepo.velocityY = 0
+function stopMovement  ()  {
+  
+  petPlayerObject.velocityX = 0
+  petPlayerObject.velocityY = 0
 }
 
-const keyWasPressed = (e) => {
+function keyWasPressed (e)  {
 
   
   switch (e.key) {
@@ -364,12 +380,23 @@ const keyWasPressed = (e) => {
   }
 }
 
-const initialMap = () => {
-  map.width = 600
-  map.height = 400
+function initialMap () {
+  map.width = 400
+  map.height = 300
+  petPlayerObject = getObjectPet(petPlayer)
   interval = setInterval(paintCanvas, 50)
   window.addEventListener('keydown', keyWasPressed )
   window.addEventListener('keyup', stopMovement)
+}
+
+
+function getObjectPet() {
+  for (let i = 0; i < mokepons.length; i++) {
+    if (petPlayer === mokepons[i].name) {
+      return mokepons[i]
+    }
+    
+  }
 }
 
 window.addEventListener('load', initialPlay);
