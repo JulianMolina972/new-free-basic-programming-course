@@ -39,26 +39,39 @@ let indexPlayerAttack;
 let indexEnemyAttack;
 let interval;
 let petPlayerObject;
+let optimumHeight;
 let playerVictories = 0;
 let enemyVictories = 0;
 let canvasMap = map.getContext('2d');
 let backgroundMap = new Image();
 backgroundMap.src = './assets/mokemap.png';
+let mapWidth = map.getBoundingClientRect().width - 20
+const maxWidthMap = 600;
+
+optimumHeight = mapWidth * 3 / 4 
+
+map.width = mapWidth;
+map.height = optimumHeight;
+
+
+if(mapWidth > maxWidthMap) {
+  mapWidth = maxWidthMap - 20
+}
 
 
 
 
 
 class Mokepon {
-  constructor(name, photo, life, attacks, photoMap, x = 10, y = 10) {
+  constructor(name, photo, life, attacks, photoMap) {
     this.name = name;
     this.photo = photo;
     this.life = life;
     this.attacks = attacks;
-    this.x = x;
-    this.y = y;
-    this.width = 60;
-    this.height = 60;
+    this.width = 40;
+    this.height = 40;
+    this.x = random(0, map.width - this.width);
+    this.y = random(0, map.height - this.height);
     this.mapPhoto = new Image()
     this.mapPhoto.src = photoMap
     this.velocityX = 0
@@ -100,15 +113,18 @@ const earthType = [
   { name: 'Water 💧', id: 'button-water-pet'},
 ]
 
-let hipodoge = new Mokepon('Hipodoge', './assets/mokepons_mokepon_hipodoge_attack.png', 5, waterType, './assets/hipodoge.webp')
-let capipepo = new Mokepon('Capipepo', './assets/mokepons_mokepon_capipepo_attack.png', 5, earthType, './assets/capipepo.webp')
-let ratigueya = new Mokepon('Ratigueya', './assets/mokepons_mokepon_ratigueya_attack.png', 5, fireType,'./assets/ratigueya.webp')
-let hipodogeEnemy = new Mokepon('Hipodoge', './assets/mokepons_mokepon_hipodoge_attack.png', 5, waterType, './assets/hipodoge.webp', 80, 120)
-let capipepoEnemy = new Mokepon('Capipepo', './assets/mokepons_mokepon_capipepo_attack.png', 5, earthType, './assets/capipepo.webp', 150, 95)
-let ratigueyaEnemy = new Mokepon('Ratigueya', './assets/mokepons_mokepon_ratigueya_attack.png', 5, fireType,'./assets/ratigueya.webp', 200, 190)
-let pydos = new Mokepon('Pydos', './assets/mokepons_mokepon_pydos_attack.png', 5, waterType)
-let langostelvis = new Mokepon('Langostelvis', './assets/mokepons_mokepon_langostelvis_attack.png', 5, fireType)
-let tucapalma = new Mokepon('Tucapalma', './assets/mokepons_mokepon_tucapalma_attack.png', 5, earthType)
+let hipodoge = new Mokepon('Hipodoge', './assets/mokepons_mokepon_hipodoge_attack.png', 5, waterType, './assets/mokepons_mokepon_hipodoge_attack.png')
+let capipepo = new Mokepon('Capipepo', './assets/mokepons_mokepon_capipepo_attack.png', 5, earthType, './assets/mokepons_mokepon_capipepo_attack.png')
+let ratigueya = new Mokepon('Ratigueya', './assets/mokepons_mokepon_ratigueya_attack.png', 5, fireType,'./assets/mokepons_mokepon_ratigueya_attack.png')
+let hipodogeEnemy = new Mokepon('Hipodoge', './assets/mokepons_mokepon_hipodoge_attack.png', 5, waterType, './assets/mokepons_mokepon_hipodoge_attack.png')
+let capipepoEnemy = new Mokepon('Capipepo', './assets/mokepons_mokepon_capipepo_attack.png', 5, earthType, './assets/mokepons_mokepon_capipepo_attack.png')
+let ratigueyaEnemy = new Mokepon('Ratigueya', './assets/mokepons_mokepon_ratigueya_attack.png', 5, fireType,'./assets/mokepons_mokepon_ratigueya_attack.png')
+let pydos = new Mokepon('Pydos', './assets/mokepons_mokepon_pydos_attack.png', 5, waterType, './assets/mokepons_mokepon_pydos_attack.png')
+let langostelvis = new Mokepon('Langostelvis', './assets/mokepons_mokepon_langostelvis_attack.png', 5, fireType, './assets/mokepons_mokepon_langostelvis_attack.png')
+let tucapalma = new Mokepon('Tucapalma', './assets/mokepons_mokepon_tucapalma_attack.png', 5, earthType, './assets/mokepons_mokepon_tucapalma_attack.png')
+let pydosEnemy = new Mokepon('Pydos', './assets/mokepons_mokepon_pydos_attack.png', 5, waterType, './assets/mokepons_mokepon_pydos_attack.png')
+let langostelvisEnemy = new Mokepon('Langostelvis', './assets/mokepons_mokepon_langostelvis_attack.png', 5, fireType, './assets/mokepons_mokepon_langostelvis_attack.png')
+let tucapalmaEnemy = new Mokepon('Tucapalma', './assets/mokepons_mokepon_tucapalma_attack.png', 5, earthType, './assets/mokepons_mokepon_tucapalma_attack.png')
 
 mokepons.push(hipodoge, ratigueya, capipepo, pydos, langostelvis, tucapalma)
 
@@ -149,7 +165,7 @@ function random (min, max){
 }
 
 function displayStyles ()  {
-  // sectionSelectAttack.style.display = 'flex';
+  
 }
 
 function selectPetPlayer()  {
@@ -186,7 +202,6 @@ function selectPetPlayer()  {
   extractAttacks(petPlayer)
   sectionSeeMap.style.display = 'flex';
   initialMap();
-  selectPetEnemy()
   
 }
 
@@ -235,10 +250,9 @@ function attackSequence () {
   })
 }
 
-function selectPetEnemy()  {
-  const randomPet = random(0, mokepons.length - 1);  
-  spanEnemyPet.innerHTML = mokepons[randomPet].name
-  selectPetEnemyRandom = mokepons[randomPet].attacks
+function selectPetEnemy(enemy)  {
+  spanEnemyPet.innerHTML = enemy.name
+  selectPetEnemyRandom = enemy.attacks
   attackSequence();
 }
 
@@ -334,6 +348,18 @@ function paintCanvas() {
   hipodogeEnemy.paintMokepon();
   capipepoEnemy.paintMokepon();
   ratigueyaEnemy.paintMokepon();
+  pydosEnemy.paintMokepon();
+  langostelvisEnemy.paintMokepon();
+  tucapalmaEnemy.paintMokepon();
+
+  if (petPlayerObject.velocityX !== 0 || petPlayerObject.velocityY !== 0) {
+    checkCollision(hipodogeEnemy)
+    checkCollision(capipepoEnemy)
+    checkCollision(ratigueyaEnemy)
+    checkCollision(pydosEnemy)
+    checkCollision(langostelvisEnemy)
+    checkCollision(tucapalmaEnemy)
+  }
 }
 
 function moveRight  ()  {
@@ -381,8 +407,6 @@ function keyWasPressed (e)  {
 }
 
 function initialMap () {
-  map.width = 400
-  map.height = 300
   petPlayerObject = getObjectPet(petPlayer)
   interval = setInterval(paintCanvas, 50)
   window.addEventListener('keydown', keyWasPressed )
@@ -397,6 +421,32 @@ function getObjectPet() {
     }
     
   }
+}
+
+function checkCollision (enemy) {
+  const enemyUp = enemy.y
+  const enemyDown = enemy.y + enemy.height
+  const enemyRight = enemy.x + enemy.width
+  const enemyLeft = enemy.x 
+
+  const petUp = petPlayerObject.y
+  const petDown = petPlayerObject.y + petPlayerObject.height
+  const petRight = petPlayerObject.x + petPlayerObject.width
+  const petLeft = petPlayerObject.x 
+
+  if (petDown < enemyUp || 
+    petUp > enemyDown || 
+    petRight < enemyLeft || 
+    petLeft > enemyRight) {
+    return
+  }
+
+  stopMovement();
+  clearInterval(interval)
+  sectionSelectAttack.style.display = 'flex';
+  sectionSeeMap.style.display = 'none';
+  selectPetEnemy(enemy);
+
 }
 
 window.addEventListener('load', initialPlay);

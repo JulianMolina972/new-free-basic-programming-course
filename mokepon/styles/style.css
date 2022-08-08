@@ -23,7 +23,7 @@ main {
   flex-direction: column;
   align-items: center;
   height: 100%;
-  padding: 30px;
+  padding: 10px;
 }
 
 input:hover + label{
@@ -63,7 +63,6 @@ input:hover + label{
   flex-wrap: wrap;
 }
 #select-pet {
-  margin: 0 auto;
   max-width: 900px;
   display: flex;
   flex-direction: column;
@@ -235,7 +234,6 @@ input:hover + label{
 }
 
 #see-map {
-  width: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -245,13 +243,20 @@ input:hover + label{
 }
 
 #map {
-  margin: 20px auto;
-  border: 2px solid white ;
+  width: 100%;
 }
 
 @media  (max-width: 600px) {
   .attacks {
     display: flex;
     flex-direction: column;
+  }
+}
+
+@media  (max-width: 785px) {
+  #see-map h2 {
+    font-size: 24px;
+    height: auto;
+    margin: 10px;
   }
 }
