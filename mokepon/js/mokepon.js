@@ -1,5 +1,22 @@
 const $ = (id) => document.getElementById(id);
 
+const buttonSelectPet = $('button-select-pet')
+const spanPlayerPet = $('player-pet')
+const spanEnemyPet = $('enemy-pet')
+const messages = $('result')
+const playerAttack = $('player-attack')
+const enemyAttack = $('enemy-attack')
+const spanPlayerLives = $('player-lives')
+const spanEnemyLives = $('enemy-lives')
+const buttonReset = $('button-reset')
+const sectionSelectAttack = $('select-attack')
+const selectPet = $('select-pet')
+const cardsContainer = $('cards-container')
+const petAttacks = $('pet-attacks')
+const sectionSeeMap = $('see-map')
+const map = $('map')
+
+
 let resultGame;
 let optionMokepons;
 let selectHipodoge;
@@ -16,26 +33,19 @@ let mokeponAttacks;
 let selectPetEnemyRandom;
 let indexPlayerAttack;
 let indexEnemyAttack;
+let interval;
 let mokepons = [];
 let buttons = [];
 let playerAttackSequence = [];
 let enemyAttackSequence = [];
 let playerVictories = 0;
 let enemyVictories = 0;
+let canvasMap = map.getContext('2d');
+let backgroundMap = new Image();
+backgroundMap.src = '../assets/mokemap.png';
 
-const buttonSelectPet = $('button-select-pet')
-const spanPlayerPet = $('player-pet')
-const spanEnemyPet = $('enemy-pet')
-const messages = $('result')
-const playerAttack = $('player-attack')
-const enemyAttack = $('enemy-attack')
-const spanPlayerLives = $('player-lives')
-const spanEnemyLives = $('enemy-lives')
-const buttonReset = $('button-reset')
-const sectionSelectAttack = $('select-attack')
-const selectPet = $('select-pet')
-const cardsContainer = $('cards-container')
-const petAttacks = $('pet-attacks')
+
+
 
 class Mokepon {
   constructor(name, photo, life, attacks) {
@@ -43,6 +53,14 @@ class Mokepon {
     this.photo = photo;
     this.life = life;
     this.attacks = attacks;
+    this.x = 20;
+    this.y = 30;
+    this.width = 80;
+    this.height = 80;
+    this.mapPhoto = new Image()
+    this.mapPhoto.src = photo
+    this.velocityX = 0
+    this.velocityY = 0
   }
 }
 
@@ -83,6 +101,7 @@ mokepons.push(hipodoge, ratigueya, capipepo, pydos, langostelvis, tucapalma)
 const initialPlay = () => {
   
   sectionSelectAttack.style.display = 'none';
+  sectionSeeMap.style.display = 'none';
   
   mokepons.forEach(mokepon => { 
     optionMokepons = `
@@ -115,11 +134,15 @@ const random = (min, max) => {
 }
 
 const displayStyles = () => {
-  sectionSelectAttack.style.display = 'flex';
+  // sectionSelectAttack.style.display = 'flex';
   selectPet.style.display = 'none';
 }
 
 const selectPetPlayer = () => {
+  
+  sectionSeeMap.style.display = 'flex';
+  initialMap();
+  
   if(selectHipodoge.checked == true) {
     spanPlayerPet.innerHTML = selectHipodoge.id
     petPlayer = selectHipodoge.id
@@ -276,6 +299,77 @@ const createMessageFinal = (resultFinal) => {
 
 const restartGame = () => {
   location.reload();
+}
+
+function paintCanvas() {
+  capipepo.x += capipepo.velocityX
+  capipepo.y += capipepo.velocityY
+  canvasMap.clearRect(0, 0, map.width, map.height);
+  canvasMap.drawImage(
+    backgroundMap,
+    0,
+    0,
+    map.width,
+    map.height
+  )
+  canvasMap.drawImage(
+    capipepo.mapPhoto,
+    capipepo.x,
+    capipepo.y,
+    capipepo.width,
+    capipepo.height
+  )
+}
+
+const moveRight = () => {
+    capipepo.velocityX = 5;
+}
+
+const moveLeft = () => {
+    capipepo.velocityX = -5
+}
+
+const moveUp = () => {
+    capipepo.velocityY = -5
+}
+
+const moveDown = () => {
+    capipepo.velocityY = 5
+}
+
+const stopMovement = () => {
+  capipepo.velocityX = 0
+  capipepo.velocityY = 0
+}
+
+const keyWasPressed = (e) => {
+
+  
+  switch (e.key) {
+    case 'ArrowUp':
+      moveUp();
+      break;
+    case 'ArrowDown':
+      moveDown();
+      break;
+    case 'ArrowRight':
+      moveRight();
+      break;
+    case 'ArrowLeft':
+      moveLeft();
+      break;
+  
+    default:
+      break;
+  }
+}
+
+const initialMap = () => {
+  map.width = 600
+  map.height = 400
+  interval = setInterval(paintCanvas, 50)
+  window.addEventListener('keydown', keyWasPressed )
+  window.addEventListener('keyup', stopMovement)
 }
 
 window.addEventListener('load', initialPlay);
