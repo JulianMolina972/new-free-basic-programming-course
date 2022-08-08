@@ -11,7 +11,7 @@
   <title>MOKEPON! 💥</title>
 </head>
 <body>
-  <header>
+  <header id="header">
     <h1 class="title">MOKEMON! ⚡</h1> 
   </header>
   <main>
@@ -28,12 +28,15 @@
 
     <section id="see-map">
       <h2 class="title">Go around the map with your mokepon ⚡</h2> 
-      <canvas id="map"></canvas>
-      <button onmouseup="stopMovement()" onmousedown="moveUp()">Up</button>
-      <button onmouseup="stopMovement()" onmousedown="moveDown()">Down</button>
-      <button onmouseup="stopMovement()" onmousedown="moveRight()">Right</button>
-      <button onmouseup="stopMovement()" onmousedown="moveLeft()">Left</button>
-
+      <div class="map-canvas">
+        <canvas id="map"></canvas>
+        <div class="map-buttons">
+          <button onmouseup="stopMovement()" onmousedown="moveUp()"  class="up">Up</button>
+          <button onmouseup="stopMovement()" onmousedown="moveDown()" class="down">Down</button>
+          <button onmouseup="stopMovement()" onmousedown="moveRight()" class="right">Right</button>
+          <button onmouseup="stopMovement()" onmousedown="moveLeft()" class="left">Left</button>
+        </div>
+      </div>
     </section>
     
     <section id="select-attack">

@@ -1,5 +1,6 @@
 const $ = (id) => document.getElementById(id);
 
+const header = $('header');
 const buttonSelectPet = $('button-select-pet')
 const spanPlayerPet = $('player-pet')
 const spanEnemyPet = $('enemy-pet')
@@ -53,27 +54,22 @@ optimumHeight = mapWidth * 3 / 4
 map.width = mapWidth;
 map.height = optimumHeight;
 
-
 if(mapWidth > maxWidthMap) {
   mapWidth = maxWidthMap - 20
 }
 
-
-
-
-
 class Mokepon {
-  constructor(name, photo, life, attacks, photoMap) {
+  constructor(name, photo, life, attacks) {
     this.name = name;
     this.photo = photo;
     this.life = life;
     this.attacks = attacks;
-    this.width = 40;
-    this.height = 40;
+    this.width = 60;
+    this.height = 60;
     this.x = random(0, map.width - this.width);
     this.y = random(0, map.height - this.height);
     this.mapPhoto = new Image()
-    this.mapPhoto.src = photoMap
+    this.mapPhoto.src = photo
     this.velocityX = 0
     this.velocityY = 0
   }
@@ -113,18 +109,25 @@ const earthType = [
   { name: 'Water 💧', id: 'button-water-pet'},
 ]
 
-let hipodoge = new Mokepon('Hipodoge', './assets/mokepons_mokepon_hipodoge_attack.png', 5, waterType, './assets/mokepons_mokepon_hipodoge_attack.png')
-let capipepo = new Mokepon('Capipepo', './assets/mokepons_mokepon_capipepo_attack.png', 5, earthType, './assets/mokepons_mokepon_capipepo_attack.png')
-let ratigueya = new Mokepon('Ratigueya', './assets/mokepons_mokepon_ratigueya_attack.png', 5, fireType,'./assets/mokepons_mokepon_ratigueya_attack.png')
-let hipodogeEnemy = new Mokepon('Hipodoge', './assets/mokepons_mokepon_hipodoge_attack.png', 5, waterType, './assets/mokepons_mokepon_hipodoge_attack.png')
-let capipepoEnemy = new Mokepon('Capipepo', './assets/mokepons_mokepon_capipepo_attack.png', 5, earthType, './assets/mokepons_mokepon_capipepo_attack.png')
-let ratigueyaEnemy = new Mokepon('Ratigueya', './assets/mokepons_mokepon_ratigueya_attack.png', 5, fireType,'./assets/mokepons_mokepon_ratigueya_attack.png')
-let pydos = new Mokepon('Pydos', './assets/mokepons_mokepon_pydos_attack.png', 5, waterType, './assets/mokepons_mokepon_pydos_attack.png')
-let langostelvis = new Mokepon('Langostelvis', './assets/mokepons_mokepon_langostelvis_attack.png', 5, fireType, './assets/mokepons_mokepon_langostelvis_attack.png')
-let tucapalma = new Mokepon('Tucapalma', './assets/mokepons_mokepon_tucapalma_attack.png', 5, earthType, './assets/mokepons_mokepon_tucapalma_attack.png')
-let pydosEnemy = new Mokepon('Pydos', './assets/mokepons_mokepon_pydos_attack.png', 5, waterType, './assets/mokepons_mokepon_pydos_attack.png')
-let langostelvisEnemy = new Mokepon('Langostelvis', './assets/mokepons_mokepon_langostelvis_attack.png', 5, fireType, './assets/mokepons_mokepon_langostelvis_attack.png')
-let tucapalmaEnemy = new Mokepon('Tucapalma', './assets/mokepons_mokepon_tucapalma_attack.png', 5, earthType, './assets/mokepons_mokepon_tucapalma_attack.png')
+const hipodogeImage = './assets/mokepons_mokepon_hipodoge_attack.png'
+const capipepoImage = './assets/mokepons_mokepon_capipepo_attack.png'
+const ratigueyaImage = './assets/mokepons_mokepon_ratigueya_attack.png'
+const pydosImage = './assets/mokepons_mokepon_pydos_attack.png'
+const langostelvisImage = './assets/mokepons_mokepon_langostelvis_attack.png'
+const tucapalmaImage = './assets/mokepons_mokepon_tucapalma_attack.png'
+
+let pydos = new Mokepon('Pydos',pydosImage , 5, waterType)
+let pydosEnemy = new Mokepon('Pydos', pydosImage, 5, waterType)
+let capipepo = new Mokepon('Capipepo',capipepoImage, 5, earthType)
+let capipepoEnemy = new Mokepon('Capipepo', capipepoImage, 5, earthType)
+let hipodoge = new Mokepon('Hipodoge',hipodogeImage , 5, waterType)
+let hipodogeEnemy = new Mokepon('Hipodoge', hipodogeImage, 5, waterType)
+let ratigueya = new Mokepon('Ratigueya', ratigueyaImage, 5, fireType)
+let ratigueyaEnemy = new Mokepon('Ratigueya', ratigueyaImage, 5, fireType)
+let tucapalma = new Mokepon('Tucapalma', tucapalmaImage, 5, earthType)
+let tucapalmaEnemy = new Mokepon('Tucapalma', tucapalmaImage, 5, earthType)
+let langostelvis = new Mokepon('Langostelvis',langostelvisImage , 5, fireType)
+let langostelvisEnemy = new Mokepon('Langostelvis', langostelvisImage, 5, fireType)
 
 mokepons.push(hipodoge, ratigueya, capipepo, pydos, langostelvis, tucapalma)
 
@@ -156,7 +159,6 @@ function initialPlay()  {
 
   // buttonReset.style.display = 'none';
   buttonSelectPet.addEventListener('click', selectPetPlayer);
-  
   buttonReset.addEventListener('click', restartGame)
 }
 
@@ -164,44 +166,52 @@ function random (min, max){
   return Math.floor(Math.random()* (max - min + 1) + min);
 }
 
-function displayStyles ()  {
-  
+function showMap ()  {
+  extractAttacks(petPlayer)
+  sectionSeeMap.style.display = 'flex';
+  header.style.display = 'none';
+  initialMap();
 }
 
 function selectPetPlayer()  {
   
-  selectPet.style.display = 'none';
-  
   if(selectHipodoge.checked == true) {
+    selectPet.style.display = 'none';
     spanPlayerPet.innerHTML = selectHipodoge.id
     petPlayer = selectHipodoge.id
-    displayStyles();
+    showMap();
   } else if(selectCapipepo.checked == true) {
+    selectPet.style.display = 'none';
     spanPlayerPet.innerHTML = selectCapipepo.id
     petPlayer = selectCapipepo.id
-    displayStyles();
+    showMap();
   } else if(selectRatigueya.checked == true) {
+    selectPet.style.display = 'none';
     spanPlayerPet.innerHTML = selectRatigueya.id
     petPlayer = selectRatigueya.id
-    displayStyles();
+    showMap();
   } else if(selectPydos.checked == true) {
+    selectPet.style.display = 'none';
     spanPlayerPet.innerHTML = selectPydos.id
     petPlayer = selectPydos.id
-    displayStyles();
+    showMap();
   } else if(selectLangostelvis.checked == true) {
+    selectPet.style.display = 'none';
     spanPlayerPet.innerHTML = selectLangostelvis.id
     petPlayer = selectLangostelvis.id
-    displayStyles(); 
+    showMap();
   } else if(selectTucapalma.checked == true) {
+    selectPet.style.display = 'none';
     spanPlayerPet.innerHTML = selectTucapalma.id
     petPlayer = selectTucapalma.id
-    displayStyles(); 
+    showMap();
   } else {
     alert('please select an option')
+    // selectPet.style.display = 'none';
   }
-  extractAttacks(petPlayer)
-  sectionSeeMap.style.display = 'flex';
-  initialMap();
+  // extractAttacks(petPlayer)
+  // sectionSeeMap.style.display = 'flex';
+  // initialMap();
   
 }
 
@@ -333,7 +343,6 @@ function restartGame()  {
 }
 
 function paintCanvas() {
-  
   petPlayerObject.x += petPlayerObject.velocityX
   petPlayerObject.y += petPlayerObject.velocityY
   canvasMap.clearRect(0, 0, map.width, map.height);
@@ -385,8 +394,6 @@ function stopMovement  ()  {
 }
 
 function keyWasPressed (e)  {
-
-  
   switch (e.key) {
     case 'ArrowUp':
       moveUp();
@@ -444,6 +451,7 @@ function checkCollision (enemy) {
   stopMovement();
   clearInterval(interval)
   sectionSelectAttack.style.display = 'flex';
+  header.style.display = 'flex';
   sectionSeeMap.style.display = 'none';
   selectPetEnemy(enemy);
 
