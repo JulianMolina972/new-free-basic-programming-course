@@ -4,7 +4,7 @@ const header = $('header');
 const buttonSelectPet = $('button-select-pet')
 const spanPlayerPet = $('player-pet')
 const spanEnemyPet = $('enemy-pet')
-const messages = $('result')
+const messages = $('combat')
 const playerAttack = $('player-attack')
 const enemyAttack = $('enemy-attack')
 const spanPlayerLives = $('player-lives')
@@ -24,7 +24,7 @@ let mokeponsEnemy = [];
 let buttons = [];
 let playerAttackSequence = [];
 let enemyAttackSequence = [];
-let resultGame;
+let combatGame;
 let optionMokepons;
 let selectHipodoge;
 let selectCapipepo; 
@@ -154,7 +154,7 @@ function initialPlay()  {
   selectTucapalma = $('Tucapalma')
   selectLangostelvis = $('Langostelvis')
 
-  // buttonReset.style.display = 'none';
+  buttonReset.style.display = 'none';
   buttonSelectPet.addEventListener('click', selectPetPlayer);
   buttonReset.addEventListener('click', restartGame) 
 
@@ -300,6 +300,23 @@ function sendAttacks() {
       attacks: playerAttackSequence
     })
   })
+
+  interval = setInterval(getAttacks, 50)
+}
+
+function getAttacks() {
+  fetch(`http://localhost:8080/mokepon/${enemyId}/attacks`)
+    .then((res) =>  {
+      if (res.ok) {
+        res.json()
+          .then(( { attacks }) => {
+            if (attacks.length === 5) {
+              enemyAttackSequence = attacks
+              combat()
+            }
+          })
+      }
+    })
 }
 
 function selectPetEnemy(enemy)  {
@@ -316,7 +333,7 @@ function randomAttackEnemy ()  {
 
 function startCombat ()  {
   if (playerAttackSequence.length === 5) {
-    result();
+    combat();
   }
 }
 
@@ -325,32 +342,34 @@ function indexBoth (player, enemy) {
   indexEnemyAttack = enemyAttackSequence[enemy];
 }
 
-function result  ()  {
+function combat()  {
+  clearInterval(interval)
   for (let i = 0; i < playerAttackSequence.length; i++) {
     if(playerAttackSequence[i] === enemyAttackSequence[i]) {
       indexBoth(i, i)
-      resultGame = 'TIE';
+      combatGame = 'TIE';
     } else if (playerAttackSequence[i] === 'Fire 🔥' && enemyAttackSequence[i] === 'Water 💧' || 
               playerAttackSequence[i] === 'Earth 🌱' && enemyAttackSequence[i] === 'Fire 🔥'||
               playerAttackSequence[i] === 'Water 💧' && enemyAttackSequence[i] === 'Earth 🌱'){
         indexBoth(i, i)
-        resultGame = 'LOST';
+        combatGame = 'LOST';
         enemyVictories++
         spanEnemyLives.innerText = enemyVictories;
 
     } else {
         indexBoth(i, i)
-        resultGame = 'YOU WON!';
+        combatGame = 'YOU WON!';
         playerVictories++
         spanPlayerLives.innerText = playerVictories;
     }
-    createMessage(resultGame);
+    // buttonReset.style.display = 'none';
+    createMessage(combatGame);
   }
   checkLives();
 
 
   
-  // return resultGame;
+  // return combatGame;
 }
 
 function checkLives ()  {
@@ -361,22 +380,23 @@ function checkLives ()  {
   } else {
     createMessageFinal('I am sorry, you lost')
   }
+
 }
 
-function createMessage  (resultGameFinal)  {
+function createMessage  (combatGameFinal)  {
 
   let playerAttackNew = document.createElement('p');
   let enemyAttackNew = document.createElement('p');
 
-  messages.innerHTML = resultGameFinal;
+  messages.innerHTML = combatGameFinal;
   playerAttackNew.innerHTML = indexPlayerAttack;
   enemyAttackNew.innerHTML = indexEnemyAttack;
   playerAttack.appendChild(playerAttackNew)
   enemyAttack.appendChild(enemyAttackNew)
 }
 
-function createMessageFinal (resultFinal)  {
-  messages.innerText = resultFinal
+function createMessageFinal (combatFinal)  {
+  messages.innerText = combatFinal
   buttonReset.style.display = 'flex';
 }
 
@@ -424,7 +444,8 @@ function  sendPosition(x, y) {
           .then (function ({ enemies }) {
             console.log(enemies)
             mokeponsEnemy = enemies.map(enemy => {
-              let enemyMokepon = null;
+              let enemyMokepon = null
+              console.log(enemy.mokepon)
               const nameMokepon = enemy.mokepon.name || ""
               if (nameMokepon === 'Hipodoge') {
                 enemyMokepon = new Mokepon('Hipodoge', hipodogeImage, 5, waterType, enemy.id)

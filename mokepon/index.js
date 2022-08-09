@@ -71,7 +71,7 @@ app.post("/mokepon/:playerId/position", (req, res) => {
     players[playerIndex].positionUpdate(x, y)
   }
 
-  const enemies = players.filter((player) => player.id !== playerId)
+  const enemies = players.filter((player) => playerId !== player.id)
 
 
   res.send({
@@ -89,11 +89,15 @@ app.post("/mokepon/:playerId/attacks", (req, res) => {
   if (playerIndex >= 0) {
     players[playerIndex].getAttacks(attacks)
   }
-
-
-
   res.end()
+})
 
+app.get("/mokepon/:playerId/attacks", (req, res) => {
+  const playerId = req.params.playerId || ""
+  const player = players.find((player) => playerId === player.id)
+  res.send({
+    attacks: player.attacks || []
+  })
 })
 
 app.listen(8080, () => {
