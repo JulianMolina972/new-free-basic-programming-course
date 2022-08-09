@@ -1,0 +1,28 @@
+{
+  "name": "new-free-basic-programming-course",
+  "version": "1.0.0",
+  "description": "New free basic programming course",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JulianMolina972/new-free-basic-programming-course.git"
+  },
+  "keywords": [
+    "mokepon",
+    "js",
+    "nodejs"
+  ],
+  "author": "Julian Molina <juliandavidmv@ufps.edu.co>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JulianMolina972/new-free-basic-programming-course/issues"
+  },
+  "homepage": "https://github.com/JulianMolina972/new-free-basic-programming-course#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.1"
+  }
+}

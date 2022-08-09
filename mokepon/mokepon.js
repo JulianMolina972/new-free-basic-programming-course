@@ -17,7 +17,7 @@ const petAttacks = $('pet-attacks')
 const sectionSeeMap = $('see-map')
 const map = $('map')
 
-
+let playerId = null
 let mokepons = [];
 let buttons = [];
 let playerAttackSequence = [];
@@ -159,7 +159,23 @@ function initialPlay()  {
 
   // buttonReset.style.display = 'none';
   buttonSelectPet.addEventListener('click', selectPetPlayer);
-  buttonReset.addEventListener('click', restartGame)
+  buttonReset.addEventListener('click', restartGame) 
+
+  joinTheGame();
+}
+
+function joinTheGame() {
+  fetch('http://localhost:8080/join')
+    .then((res) =>  {
+      if (res.ok) {
+        res.text()
+          .then((response) => {
+            console.log(response)
+            playerId = response
+          })
+      }
+    })
+    
 }
 
 function random (min, max){
@@ -167,6 +183,7 @@ function random (min, max){
 }
 
 function showMap ()  {
+  
   extractAttacks(petPlayer)
   sectionSeeMap.style.display = 'flex';
   header.style.display = 'none';
@@ -209,10 +226,24 @@ function selectPetPlayer()  {
     alert('please select an option')
     // selectPet.style.display = 'none';
   }
-  // extractAttacks(petPlayer)
-  // sectionSeeMap.style.display = 'flex';
-  // initialMap();
   
+  selectMokepon(petPlayer);
+  
+  
+}
+
+function selectMokepon(petPlayer) {
+  // console.log(petPlayer)
+  fetch(`http://localhost:8080/mokepon/${playerId}`, {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      mokepon: petPlayer
+    })
+  })
+
 }
 
 function extractAttacks(petPlayer) {
