@@ -59,7 +59,8 @@ if(mapWidth > maxWidthMap) {
 }
 
 class Mokepon {
-  constructor(name, photo, life, attacks) {
+  constructor(name, photo, life, attacks, id = null) {
+    this.id = id
     this.name = name;
     this.photo = photo;
     this.life = life;
@@ -117,17 +118,11 @@ const langostelvisImage = './assets/mokepons_mokepon_langostelvis_attack.png'
 const tucapalmaImage = './assets/mokepons_mokepon_tucapalma_attack.png'
 
 let pydos = new Mokepon('Pydos',pydosImage , 5, waterType)
-let pydosEnemy = new Mokepon('Pydos', pydosImage, 5, waterType)
 let capipepo = new Mokepon('Capipepo',capipepoImage, 5, earthType)
-let capipepoEnemy = new Mokepon('Capipepo', capipepoImage, 5, earthType)
 let hipodoge = new Mokepon('Hipodoge',hipodogeImage , 5, waterType)
-let hipodogeEnemy = new Mokepon('Hipodoge', hipodogeImage, 5, waterType)
 let ratigueya = new Mokepon('Ratigueya', ratigueyaImage, 5, fireType)
-let ratigueyaEnemy = new Mokepon('Ratigueya', ratigueyaImage, 5, fireType)
 let tucapalma = new Mokepon('Tucapalma', tucapalmaImage, 5, earthType)
-let tucapalmaEnemy = new Mokepon('Tucapalma', tucapalmaImage, 5, earthType)
 let langostelvis = new Mokepon('Langostelvis',langostelvisImage , 5, fireType)
-let langostelvisEnemy = new Mokepon('Langostelvis', langostelvisImage, 5, fireType)
 
 mokepons.push(hipodoge, ratigueya, capipepo, pydos, langostelvis, tucapalma)
 
@@ -422,6 +417,30 @@ function  sendPosition(x, y) {
         res.json()
           .then (function ({ enemies }) {
             console.log(enemies)
+            enemies.forEach(enemy => {
+              let enemyMokepon = null;
+              const nameMokepon = enemy.mokepon.name || ""
+              if (nameMokepon === 'Hipodoge') {
+                enemyMokepon = new Mokepon('Hipodoge', hipodogeImage, 5, waterType)
+              } else if (nameMokepon === 'Capipepo') {
+                enemyMokepon = new Mokepon('Capipepo', capipepoImage, 5, earthType)
+              } else if (nameMokepon === 'Ratigueya') {
+                enemyMokepon = new Mokepon('Ratigueya', ratigueyaImage, 5, fireType)
+              } else if (nameMokepon === 'Pydos') {
+                enemyMokepon = new Mokepon('Pydos', pydosImage, 5, waterType)
+              } else if (nameMokepon === 'Tucapalma') {
+                enemyMokepon = new Mokepon('Tucapalma', tucapalmaImage, 5, earthType)
+              } else if (nameMokepon === 'Langostelvis') {
+                enemyMokepon = new Mokepon('Langostelvis', langostelvisImage, 5, fireType)
+              }
+              enemyMokepon.x = enemy.x
+              enemyMokepon.y = enemy.y
+              
+              enemyMokepon.paintMokepon()
+
+
+
+            })
           })
       }
     })
