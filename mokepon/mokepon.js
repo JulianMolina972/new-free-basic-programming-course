@@ -18,7 +18,9 @@ const sectionSeeMap = $('see-map')
 const map = $('map')
 
 let playerId = null
+let enemyId = null
 let mokepons = [];
+let mokeponsEnemy = [];
 let buttons = [];
 let playerAttackSequence = [];
 let enemyAttackSequence = [];
@@ -281,7 +283,21 @@ function attackSequence () {
         button.style.background = '#112f58';
         button.disabled = true;
       }
-      randomAttackEnemy();
+      if(playerAttackSequence.length === 5) {
+      sendAttacks();
+      }
+    })
+  })
+}
+
+function sendAttacks() {
+  fetch(`http://localhost:8080/mokepon/${playerId}/attacks`, {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      attacks: playerAttackSequence
     })
   })
 }
@@ -383,21 +399,11 @@ function paintCanvas() {
 
   sendPosition(petPlayerObject.x, petPlayerObject.y);
 
-  hipodogeEnemy.paintMokepon();
-  capipepoEnemy.paintMokepon();
-  ratigueyaEnemy.paintMokepon();
-  pydosEnemy.paintMokepon();
-  langostelvisEnemy.paintMokepon();
-  tucapalmaEnemy.paintMokepon();
 
-  if (petPlayerObject.velocityX !== 0 || petPlayerObject.velocityY !== 0) {
-    checkCollision(hipodogeEnemy)
-    checkCollision(capipepoEnemy)
-    checkCollision(ratigueyaEnemy)
-    checkCollision(pydosEnemy)
-    checkCollision(langostelvisEnemy)
-    checkCollision(tucapalmaEnemy)
-  }
+  mokeponsEnemy.forEach(mokepon => {
+    mokepon.paintMokepon()
+    checkCollision(mokepon)
+  })
 }
 
 function  sendPosition(x, y) {
@@ -417,29 +423,26 @@ function  sendPosition(x, y) {
         res.json()
           .then (function ({ enemies }) {
             console.log(enemies)
-            enemies.forEach(enemy => {
+            mokeponsEnemy = enemies.map(enemy => {
               let enemyMokepon = null;
               const nameMokepon = enemy.mokepon.name || ""
               if (nameMokepon === 'Hipodoge') {
-                enemyMokepon = new Mokepon('Hipodoge', hipodogeImage, 5, waterType)
+                enemyMokepon = new Mokepon('Hipodoge', hipodogeImage, 5, waterType, enemy.id)
               } else if (nameMokepon === 'Capipepo') {
-                enemyMokepon = new Mokepon('Capipepo', capipepoImage, 5, earthType)
+                enemyMokepon = new Mokepon('Capipepo', capipepoImage, 5, earthType, enemy.id)
               } else if (nameMokepon === 'Ratigueya') {
-                enemyMokepon = new Mokepon('Ratigueya', ratigueyaImage, 5, fireType)
+                enemyMokepon = new Mokepon('Ratigueya', ratigueyaImage, 5, fireType, enemy.id)
               } else if (nameMokepon === 'Pydos') {
-                enemyMokepon = new Mokepon('Pydos', pydosImage, 5, waterType)
+                enemyMokepon = new Mokepon('Pydos', pydosImage, 5, waterType, enemy.id)
               } else if (nameMokepon === 'Tucapalma') {
-                enemyMokepon = new Mokepon('Tucapalma', tucapalmaImage, 5, earthType)
+                enemyMokepon = new Mokepon('Tucapalma', tucapalmaImage, 5, earthType, enemy.id)
               } else if (nameMokepon === 'Langostelvis') {
-                enemyMokepon = new Mokepon('Langostelvis', langostelvisImage, 5, fireType)
+                enemyMokepon = new Mokepon('Langostelvis', langostelvisImage, 5, fireType, enemy.id)
               }
               enemyMokepon.x = enemy.x
               enemyMokepon.y = enemy.y
               
-              enemyMokepon.paintMokepon()
-
-
-
+              return enemyMokepon
             })
           })
       }
@@ -525,6 +528,7 @@ function checkCollision (enemy) {
 
   stopMovement();
   clearInterval(interval)
+  enemyId = enemy.id
   sectionSelectAttack.style.display = 'flex';
   header.style.display = 'flex';
   sectionSeeMap.style.display = 'none';
