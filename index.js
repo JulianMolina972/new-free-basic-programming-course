@@ -3,8 +3,12 @@ const cors = require('cors')
 
 const app = express()
 
+http://DESKTOP-79P2JLR.local:8080
+
+app.use(express.static('public'))
 app.use(cors())
 app.use(express.json())
+
 
 const players = []
 
